@@ -6,12 +6,12 @@ import { Player } from '@/type/socket';
 
 interface IContextType {
   profile: Player | null;
-  setProfile: (profile: Player) => void;
+  setProfile: (profile: Player | null) => Player | null;
 }
 
 const defaultValue: IContextType = {
   profile: null,
-  setProfile: () => {},
+  setProfile: () => null,
 };
 
 export const ProfileContext = createContext<IContextType>(defaultValue);
@@ -48,6 +48,7 @@ const ProfileContextProvider = ({ children }: IProps) => {
     }
 
     _setProfile(player);
+    return player;
   };
 
   return <ProfileContext.Provider value={{ profile, setProfile }}>{children}</ProfileContext.Provider>;

@@ -4,8 +4,6 @@ import { useRouter } from 'next/router';
 
 import { io, Socket } from 'socket.io-client';
 
-import { Player } from '@/type/socket';
-
 export const SocketContext = createContext<Socket | null>(null);
 
 export const useSocket = () => useContext(SocketContext);

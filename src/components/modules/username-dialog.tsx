@@ -29,7 +29,7 @@ const UsernameDialog = ({ className }: IProps) => {
 
     const id = uuid();
 
-    await socket.emit('create-profile', { id, username });
+    socket.emit('create-profile', { id, username });
 
     setProfile({ id, username });
   };

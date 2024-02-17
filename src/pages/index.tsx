@@ -15,7 +15,7 @@ const HomePage = (): ReactElement => {
   const createWarGame = async () => {
     if (!socket || !profile) return;
 
-    await socket.emit('create-war-game', {
+    socket.emit('create-war-game', {
       owner: profile,
       maxPlayers: 2,
     });
@@ -24,7 +24,7 @@ const HomePage = (): ReactElement => {
   const logout = async () => {
     if (!socket || !profile) return;
 
-    await socket.emit('delete-profile', profile);
+    socket.emit('delete-profile', profile);
     setProfile(null);
   };
 
@@ -45,7 +45,7 @@ const HomePage = (): ReactElement => {
       <div className="flex flex-col items-start mt-9">
         <input value={gameId} onChange={(e) => setGameId(e.target.value)} placeholder="gameId" />
         <button
-          onClick={() => socket.emit('join-war-game', { gameId })}
+          onClick={() => socket && socket.emit('join-war-game', { gameId })}
           className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4"
         >
           Rejoindre une partie
