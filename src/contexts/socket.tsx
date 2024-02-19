@@ -22,7 +22,7 @@ const SocketContextProvider = ({ children }: IProps) => {
 
     setSocket(socket);
 
-    socket.on('join-game', async (gameId: string) => {
+    socket.on('join-war-game', async (gameId: string) => {
       await router.push(`/war-game/${gameId}`);
     });
 

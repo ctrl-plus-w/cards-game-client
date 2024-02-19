@@ -38,18 +38,25 @@ const HomePage = (): ReactElement => {
 
       <p>{profile.username}</p>
 
-      <button onClick={createWarGame} className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4">
-        Créer une partie de bataille
-      </button>
-
-      <div className="flex flex-col items-start mt-9">
-        <input value={gameId} onChange={(e) => setGameId(e.target.value)} placeholder="gameId" />
-        <button
-          onClick={() => socket && socket.emit('join-war-game', { gameId })}
-          className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4"
-        >
-          Rejoindre une partie
+      <div className="flex flex-col items-start gap-2 p-2">
+        <button onClick={createWarGame} className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4">
+          Créer une partie de bataille
         </button>
+
+        <div className="flex items-center mt-9 gap-2">
+          <input
+            value={gameId}
+            onChange={(e) => setGameId(e.target.value)}
+            placeholder="gameId"
+            className="border border-neutral-800 px-2 py-1 rounded"
+          />
+          <button
+            onClick={() => socket && socket.emit('join-war-game', { gameId })}
+            className="bg-neutral-800 text-white px-4 py-1 rounded-md"
+          >
+            Rejoindre une partie de bataille
+          </button>
+        </div>
       </div>
     </div>
   );
