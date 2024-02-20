@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { useProfile } from '@/context/profile';
 import { useSocket } from '@/context/socket';
 
-import Game from '@/class/Game';
+import WarGame from '@/class/WarGame';
 
 import { cn } from '@/util/style.util';
 
@@ -17,7 +17,7 @@ const WarGamePage = () => {
 
   const { gameId } = router.query;
 
-  const [game, setGame] = useState<Game | null>(null);
+  const [game, setGame] = useState<WarGame | null>(null);
   const [hasGameBeenDeleted, setHasGameBeenDeleted] = useState(false);
 
   const playCard = () => {
@@ -44,11 +44,11 @@ const WarGamePage = () => {
       await router.push('/');
     });
 
-    socket.on('war-game-update', (_game: Game) => {
+    socket.on('war-game-update', (_game: WarGame) => {
       setGame(_game);
     });
 
-    socket.on('war-game-deleted', (_game: Game) => {
+    socket.on('war-game-deleted', (_game: WarGame) => {
       setGame(_game);
       setHasGameBeenDeleted(true);
     });
