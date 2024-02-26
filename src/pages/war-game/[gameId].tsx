@@ -18,12 +18,18 @@ const WarGamePage = () => {
   const { gameId } = router.query;
 
   const [game, setGame] = useState<WarGame | null>(null);
-  const [hasGameBeenDeleted, setHasGameBeenDeleted] = useState(false);
+  const [_hasGameBeenDeleted, setHasGameBeenDeleted] = useState(false);
 
   const playCard = () => {
     if (!socket) return;
 
     socket.emit('play-war-game-card');
+  };
+
+  const deleteGame = () => {
+    if (!socket) return;
+
+    socket.emit('delete-war-game');
   };
 
   const topCard = useMemo(() => {
@@ -51,6 +57,7 @@ const WarGamePage = () => {
     socket.on('war-game-deleted', (_game: WarGame) => {
       setGame(_game);
       setHasGameBeenDeleted(true);
+      router.push('/');
     });
   }, [gameId]);
 
@@ -59,21 +66,22 @@ const WarGamePage = () => {
 
   if (Object.keys(game.playerCards).length !== game.maxPlayers)
     return (
-      <div className="flex flex-col items-start">
-        <p>Connected as: {profile.username}</p>
-        <p>Game id: {game.id}</p>
-        <p>Max players: {game.maxPlayers}</p>
-        <p>Player count: {game.players.length + 1}</p>
-        <p>Count of players in playerCards: {Object.keys(game.playerCards).length}</p>
-
-        <br />
-        <p>Owner username: {game.owner.username}</p>
+      <div className="flex flex-col items-start p-2">
+        <p>Connecté sous le pseudo: {profile.username}</p>
+        <p>Identifiant de la partie: {game.id}</p>
+        <p>
+          Nombre de joueurs: {game.players.length + 1} / {game.maxPlayers}
+        </p>
       </div>
     );
 
   return (
     <>
       <p>Connecté sous le pseudo : {profile.username}</p>
+
+      <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={deleteGame}>
+        Supprimer la partie
+      </button>
 
       <div className="flex flex-col justify-center gap-2 flex-wrap">
         <div className="flex justify-center gap-2">
