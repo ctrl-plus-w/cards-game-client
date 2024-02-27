@@ -22,7 +22,6 @@ const Take6GamePage = () => {
 
   const { gameId } = router.query;
 
-  const [messages, setMessages] = useState<{ playerId: string; message: string }[]>([]);
   const [game, setGame] = useState<Take6Game | null>(null);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [_hasGameBeenDeleted, setHasGameBeenDeleted] = useState(false);

@@ -1,5 +1,3 @@
-import { IntRange } from '@/type/index.types';
-
 export enum CardSymbol {
   HEART = 'HEART',
   DIAMOND = 'DIAMOND',

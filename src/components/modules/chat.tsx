@@ -1,6 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-
-import { Socket } from 'socket.io-client';
+import React, { useState } from 'react';
 
 import { useSocket } from '@/context/socket';
 
