@@ -1,13 +1,14 @@
-# NextJS Project Template
-
-This repository is a NextJS project template using TailwindCSS, ESLint & Prettier.
+# Projet Jeux de cartes
 
 ## Installation
 
-1. Change the project name in the `package.json`.
+```bash 
+npm install
+```
 
-2. Run `npm install`
+## Lancer le projet
 
-## Snippets
-
-You have access to 4 default snippets in the `.vscode/snippets.code-snippets` file.
+```bash
+npm run build
+npm run start
+```
