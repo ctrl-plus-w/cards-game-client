@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { useRouter } from 'next/router';
 
+import Chat from '@/module/chat';
+
 import { useProfile } from '@/context/profile';
 import { useSocket } from '@/context/socket';
 
@@ -66,94 +68,102 @@ const WarGamePage = () => {
 
   if (Object.keys(game.playerCards).length !== game.maxPlayers)
     return (
-      <div className="flex flex-col items-start p-2">
-        <p>Connecté sous le pseudo: {profile.username}</p>
-        <p>Identifiant de la partie: {game.id}</p>
-        <p>
-          Nombre de joueurs: {game.players.length + 1} / {game.maxPlayers}
-        </p>
+      <div className="flex gap-2 p-2">
+        <div className="flex flex-col items-start p-2">
+          <p>Connecté sous le pseudo: {profile.username}</p>
+          <p>Identifiant de la partie: {game.id}</p>
+          <p>
+            Nombre de joueurs: {game.players.length + 1} / {game.maxPlayers}
+          </p>
+        </div>
+
+        <Chat game={game} sendEvent="send-war-message" className="ml-auto" />
       </div>
     );
 
   return (
-    <>
-      <p>Connecté sous le pseudo : {profile.username}</p>
+    <div className="flex p-2">
+      <div className="flex flex-col">
+        <p>Connecté sous le pseudo : {profile.username}</p>
 
-      <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={deleteGame}>
-        Supprimer la partie
-      </button>
-
-      <div className="flex flex-col justify-center gap-2 flex-wrap">
-        <div className="flex justify-center gap-2">
-          {[...game.players, game.owner]
-            .filter((player) => player.id !== profile.id)
-            .map(
-              (player) =>
-                player.id in game.playedCards &&
-                game.playedCards[player.id].map((card, i, arr) => (
-                  <div
-                    key={card.rank + card.symbol}
-                    className={cn(
-                      'flex flex-col items-center py-1 w-28 h-40 rounded bg-neutral-200 shadow shadow-black/20',
-                      arr.length > 1 && '-mr-8 ',
-                      i % 2 && 'bg-neutral-500',
-                    )}
-                    style={{ zIndex: i }}
-                  >
-                    {i % 2 === 0 ? (
-                      <>
-                        <p>{card.rank}</p>
-                        <p>{card.symbol}</p>
-                      </>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
-                )),
-            )}
-        </div>
-        <div className="w-40 h-px bg-neutral-700 mx-auto"></div>
-        <div className="flex justify-center gap-2">
-          {profile.id in game.playedCards &&
-            game.playedCards[profile.id].map((card, i, arr) => (
-              <div
-                key={card.rank + card.symbol}
-                className={cn(
-                  'flex flex-col items-center py-1 w-28 h-40 rounded bg-neutral-200 shadow shadow-black/20',
-                  arr.length > 1 && '-mr-8 ',
-                  i % 2 && 'bg-neutral-500',
-                )}
-                style={{ zIndex: i }}
-              >
-                {i % 2 === 0 ? (
-                  <>
-                    <p>{card.rank}</p>
-                    <p>{card.symbol}</p>
-                  </>
-                ) : (
-                  <></>
-                )}
-              </div>
-            ))}
-        </div>
-
-        <div className="flex justify-center gap-2">
-          {topCard && (
-            <div className="relative flex flex-col items-center py-1 w-28 h-40 rounded bg-neutral-200 shadow">
-              <p>{topCard.rank}</p>
-              <p>{topCard.symbol}</p>
-
-              <div className="-z-[5] absolute top-2 w-28 h-40 rounded bg-neutral-200 shadow opacity-80"></div>
-              <div className="-z-[6] absolute top-4 w-28 h-40 rounded bg-neutral-200 shadow opacity-40"></div>
-            </div>
-          )}
-        </div>
-
-        <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={playCard}>
-          Jouer la carte
+        <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={deleteGame}>
+          Supprimer la partie
         </button>
+
+        <div className="flex flex-col justify-center gap-2 flex-wrap">
+          <div className="flex justify-center gap-2">
+            {[...game.players, game.owner]
+              .filter((player) => player.id !== profile.id)
+              .map(
+                (player) =>
+                  player.id in game.playedCards &&
+                  game.playedCards[player.id].map((card, i, arr) => (
+                    <div
+                      key={card.rank + card.symbol}
+                      className={cn(
+                        'flex flex-col items-center py-1 w-28 h-40 rounded bg-neutral-200 shadow shadow-black/20',
+                        arr.length > 1 && '-mr-8 ',
+                        i % 2 && 'bg-neutral-500',
+                      )}
+                      style={{ zIndex: i }}
+                    >
+                      {i % 2 === 0 ? (
+                        <>
+                          <p>{card.rank}</p>
+                          <p>{card.symbol}</p>
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
+                  )),
+              )}
+          </div>
+          <div className="w-40 h-px bg-neutral-700 mx-auto"></div>
+          <div className="flex justify-center gap-2">
+            {profile.id in game.playedCards &&
+              game.playedCards[profile.id].map((card, i, arr) => (
+                <div
+                  key={card.rank + card.symbol}
+                  className={cn(
+                    'flex flex-col items-center py-1 w-28 h-40 rounded bg-neutral-200 shadow shadow-black/20',
+                    arr.length > 1 && '-mr-8 ',
+                    i % 2 && 'bg-neutral-500',
+                  )}
+                  style={{ zIndex: i }}
+                >
+                  {i % 2 === 0 ? (
+                    <>
+                      <p>{card.rank}</p>
+                      <p>{card.symbol}</p>
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              ))}
+          </div>
+
+          <div className="flex justify-center gap-2">
+            {topCard && (
+              <div className="relative flex flex-col items-center py-1 w-28 h-40 rounded bg-neutral-200 shadow">
+                <p>{topCard.rank}</p>
+                <p>{topCard.symbol}</p>
+
+                <div className="-z-[5] absolute top-2 w-28 h-40 rounded bg-neutral-200 shadow opacity-80"></div>
+                <div className="-z-[6] absolute top-4 w-28 h-40 rounded bg-neutral-200 shadow opacity-40"></div>
+              </div>
+            )}
+          </div>
+
+          <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={playCard}>
+            Jouer la carte
+          </button>
+        </div>
       </div>
-    </>
+
+      <Chat game={game} sendEvent="send-war-message" className="ml-auto" />
+    </div>
   );
 };
 

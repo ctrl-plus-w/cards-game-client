@@ -3,6 +3,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import Chat from '@/module/chat';
+
 import { useProfile } from '@/context/profile';
 import { useSocket } from '@/context/socket';
 
@@ -20,6 +22,7 @@ const Take6GamePage = () => {
 
   const { gameId } = router.query;
 
+  const [messages, setMessages] = useState<{ playerId: string; message: string }[]>([]);
   const [game, setGame] = useState<Take6Game | null>(null);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [_hasGameBeenDeleted, setHasGameBeenDeleted] = useState(false);
@@ -89,12 +92,16 @@ const Take6GamePage = () => {
 
   if (Object.keys(game.playerCards).length !== game.maxPlayers)
     return (
-      <div className="flex flex-col items-start p-2">
-        <p>Connecté sous le pseudo: {profile.username}</p>
-        <p>Identifiant de la partie: {game.id}</p>
-        <p>
-          Nombre de joueurs: {game.players.length + 1} / {game.maxPlayers}
-        </p>
+      <div className="flex p-2 gap-2">
+        <div className="flex flex-col items-start">
+          <p>Connecté sous le pseudo: {profile.username}</p>
+          <p>Identifiant de la partie: {game.id}</p>
+          <p>
+            Nombre de joueurs: {game.players.length + 1} / {game.maxPlayers}
+          </p>
+        </div>
+
+        <Chat game={game} sendEvent="send-take-6-message" className="ml-auto" />
       </div>
     );
 
@@ -124,74 +131,78 @@ const Take6GamePage = () => {
   }
 
   return (
-    <div className="flex flex-col">
-      <p>Connecté sous le pseudo : {profile.username}</p>
+    <div className="flex w-full h-full p-2">
+      <div className="flex flex-col">
+        <p>Connecté sous le pseudo : {profile.username}</p>
 
-      <p>
-        {selectedCard &&
-          selectedCard <
-            Math.min(
-              ...Object.values(game.columns)
-                .map((column) => lastEl(column))
-                .filter(isDefined)
-                .map((card) => card.rank),
-            )}
-      </p>
-
-      <div className="flex gap-4 mx-auto mb-8">
-        {game.columns.map((col, i) => (
-          <div className="flex flex-col-reverse items-center justify-start gap-2" key={i}>
-            {shouldSelectColumnToReplace ? (
-              <button onClick={setColumnToReplace(i)}>Colonne {i + 1}</button>
-            ) : (
-              <p>Colonne {i + 1}</p>
-            )}
-            {col.map((card) => (
-              <div
-                className={cn('relative flex flex-col items-start p-1 w-28 h-40', 'rounded bg-neutral-200 shadow')}
-                key={card.rank}
-              >
-                <p>{card.rank}</p>
-
-                <p>{calculateBeefHead(card)} tête(s) de boeuf</p>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-
-      {shouldSelectColumnToReplace && (
-        <p className="mx-auto mb-4 text-red-600">
-          Veuillez sélectionner une colonne par laquelle remplacer votre carte.
+        <p>
+          {selectedCard &&
+            selectedCard <
+              Math.min(
+                ...Object.values(game.columns)
+                  .map((column) => lastEl(column))
+                  .filter(isDefined)
+                  .map((card) => card.rank),
+              )}
         </p>
-      )}
 
-      {game.playedCard[profile.id] && (
-        <div className="relative flex justify-center items-center p-1 w-28 h-40 mx-auto rounded bg-neutral-200 shadow mb-4 text-3xl">
-          {game.playedCard[profile.id].rank}
+        <div className="flex gap-4 mx-auto mb-8">
+          {game.columns.map((col, i) => (
+            <div className="flex flex-col-reverse items-center justify-start gap-2" key={i}>
+              {shouldSelectColumnToReplace ? (
+                <button onClick={setColumnToReplace(i)}>Colonne {i + 1}</button>
+              ) : (
+                <p>Colonne {i + 1}</p>
+              )}
+              {col.map((card) => (
+                <div
+                  className={cn('relative flex flex-col items-start p-1 w-28 h-40', 'rounded bg-neutral-200 shadow')}
+                  key={card.rank}
+                >
+                  <p>{card.rank}</p>
+
+                  <p>{calculateBeefHead(card)} tête(s) de boeuf</p>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
-      )}
 
-      <div className="flex items-center mx-auto transform -translate-x-6 mt-auto">
-        {game.playerCards[profile.id].filter(isDefined).map((card) => (
-          <button
-            className={cn(
-              'relative flex flex-col items-start p-1 w-28 h-40 -ml-12',
-              'rounded bg-neutral-200 shadow',
-              'transform translate-x-12',
-              selectedCard === card.rank && 'bg-neutral-400 shadow-xl',
-            )}
-            onClick={() => setSelectedCard(card.rank)}
-            key={card.rank}
-          >
-            {card.rank}
-          </button>
-        ))}
+        {shouldSelectColumnToReplace && (
+          <p className="mx-auto mb-4 text-red-600">
+            Veuillez sélectionner une colonne par laquelle remplacer votre carte.
+          </p>
+        )}
+
+        {game.playedCard[profile.id] && (
+          <div className="relative flex justify-center items-center p-1 w-28 h-40 mx-auto rounded bg-neutral-200 shadow mb-4 text-3xl">
+            {game.playedCard[profile.id].rank}
+          </div>
+        )}
+
+        <div className="flex items-center mx-auto transform -translate-x-6 mt-auto">
+          {game.playerCards[profile.id].filter(isDefined).map((card) => (
+            <button
+              className={cn(
+                'relative flex flex-col items-start p-1 w-28 h-40 -ml-12',
+                'rounded bg-neutral-200 shadow',
+                'transform translate-x-12',
+                selectedCard === card.rank && 'bg-neutral-400 shadow-xl',
+              )}
+              onClick={() => setSelectedCard(card.rank)}
+              key={card.rank}
+            >
+              {card.rank}
+            </button>
+          ))}
+        </div>
+
+        <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={playCard}>
+          Jouer la carte
+        </button>
       </div>
 
-      <button className="bg-neutral-800 text-white px-4 py-1 rounded-md mt-4 mx-auto" onClick={playCard}>
-        Jouer la carte
-      </button>
+      <Chat game={game} sendEvent="send-take-6-message" className="ml-auto" />
     </div>
   );
 };

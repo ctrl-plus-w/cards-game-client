@@ -9,6 +9,7 @@ class WarGame {
   players: Player[];
   playerCards: Record<string, PlayingCard[]>;
   playedCards: Record<string, PlayingCard[]>;
+  messages: { player: Player; message: string }[];
 
   constructor(id: string, owner: Player, maxPlayers: IntRange<2, 11>) {
     this.id = id;
@@ -17,6 +18,7 @@ class WarGame {
     this.players = [];
     this.playerCards = {};
     this.playedCards = {};
+    this.messages = [];
   }
 }
 
